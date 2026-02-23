@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.flexo.diecut.dto.CreateDieCutRequest;
+import com.flexo.diecut.dto.DieCutResponse;
+import com.flexo.diecut.mapper.DieCutMapper;
 import com.flexo.diecut.model.DieCut;
 import com.flexo.diecut.repository.DieCutRepository;
 
@@ -18,7 +20,7 @@ public class DieCutService {
         this.repository = repository;
     }
 
-    public DieCut createDieCut(CreateDieCutRequest request) {
+    public DieCutResponse createDieCut(CreateDieCutRequest request) {
         DieCut dieCut = new DieCut();
         dieCut.setDieNumber(request.dieNumber());
         dieCut.setRepeatTeeth(request.repeatTeeth());
@@ -28,20 +30,25 @@ public class DieCutService {
         dieCut.setNotes(request.notes());
         dieCut.setCreatedDate(LocalDate.now());
 
-        return repository.save(dieCut);
+        return DieCutMapper.toResponse(repository.save(dieCut));
     }
 
-    public List<DieCut> getAll() {
-        return repository.findAll();
+    public List<DieCutResponse> getAll() {
+        return repository.findAll()
+                .stream()
+                .map(DieCutMapper::toResponse)
+                .toList();
     }
 
-    public DieCut getById(Long id) {
+    public DieCutResponse getById(Long id) {
         return repository.findById(id)
+                .map(DieCutMapper::toResponse)
                 .orElseThrow(() -> new RuntimeException("DieCut not found: " + id));
     }
 
-    public DieCut update(Long id, CreateDieCutRequest request) {
-        DieCut dieCut = getById(id);
+    public DieCutResponse update(Long id, CreateDieCutRequest request) {
+        DieCut dieCut = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("DieCut not found: " + id));
 
         dieCut.setDieNumber(request.dieNumber());
         dieCut.setRepeatTeeth(request.repeatTeeth());
@@ -50,7 +57,7 @@ public class DieCutService {
         dieCut.setStorageLocation(request.storageLocation());
         dieCut.setNotes(request.notes());
 
-        return repository.save(dieCut);
+        return DieCutMapper.toResponse(repository.save(dieCut));
     }
 
     public void delete(Long id) {

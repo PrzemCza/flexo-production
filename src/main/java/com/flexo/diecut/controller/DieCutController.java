@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flexo.diecut.dto.CreateDieCutRequest;
-import com.flexo.diecut.model.DieCut;
+import com.flexo.diecut.dto.DieCutResponse;
 import com.flexo.diecut.service.DieCutService;
 
 import jakarta.validation.Valid;
@@ -29,22 +29,22 @@ public class DieCutController {
     }
 
     @PostMapping
-    public ResponseEntity<DieCut> create(@RequestBody @Valid CreateDieCutRequest request) {
+    public ResponseEntity<DieCutResponse> create(@RequestBody @Valid CreateDieCutRequest request) {
         return ResponseEntity.ok(service.createDieCut(request));
     }
 
     @GetMapping
-    public ResponseEntity<List<DieCut>> getAll() {
+    public ResponseEntity<List<DieCutResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DieCut> getById(@PathVariable Long id) {
+    public ResponseEntity<DieCutResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DieCut> update(
+    public ResponseEntity<DieCutResponse> update(
             @PathVariable Long id,
             @RequestBody @Valid CreateDieCutRequest request
     ) {
