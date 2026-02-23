@@ -1,8 +1,10 @@
 package com.flexo.diecut.service;
 
 import java.time.LocalDate;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.flexo.diecut.dto.CreateDieCutRequest;
@@ -10,6 +12,7 @@ import com.flexo.diecut.dto.DieCutResponse;
 import com.flexo.diecut.mapper.DieCutMapper;
 import com.flexo.diecut.model.DieCut;
 import com.flexo.diecut.repository.DieCutRepository;
+import com.flexo.diecut.spec.DieCutSpecification;
 
 @Service
 public class DieCutService {
@@ -33,11 +36,20 @@ public class DieCutService {
         return DieCutMapper.toResponse(repository.save(dieCut));
     }
 
-    public List<DieCutResponse> getAll() {
-        return repository.findAll()
-                .stream()
-                .map(DieCutMapper::toResponse)
-                .toList();
+    public Page<DieCutResponse> getFiltered(
+            String status,
+            Long projectId,
+            String dieNumber,
+            int page,
+            int size
+    ) {
+        Specification<DieCut> spec = Specification
+                .where(DieCutSpecification.hasStatus(status))
+                .and(DieCutSpecification.hasProjectId(projectId))
+                .and(DieCutSpecification.hasDieNumberLike(dieNumber));
+
+        return repository.findAll(spec, PageRequest.of(page, size))
+                .map(DieCutMapper::toResponse);
     }
 
     public DieCutResponse getById(Long id) {

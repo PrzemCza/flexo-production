@@ -1,7 +1,6 @@
 package com.flexo.diecut.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flexo.diecut.dto.CreateDieCutRequest;
@@ -34,8 +34,14 @@ public class DieCutController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DieCutResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<Page<DieCutResponse>> getFiltered(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long projectId,
+            @RequestParam(required = false) String dieNumber,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return ResponseEntity.ok(service.getFiltered(status, projectId, dieNumber, page, size));
     }
 
     @GetMapping("/{id}")
