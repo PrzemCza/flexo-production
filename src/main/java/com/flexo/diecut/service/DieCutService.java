@@ -1,9 +1,12 @@
 package com.flexo.diecut.service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -37,19 +40,49 @@ public class DieCutService {
     }
 
     public Page<DieCutResponse> getFiltered(
-            String status,
+            List<String> statuses,
             Long projectId,
             String dieNumber,
+            LocalDate createdDateFrom,
+            LocalDate createdDateTo,
             int page,
-            int size
+            int size,
+            String sort
     ) {
-        Specification<DieCut> spec = Specification
-                .where(DieCutSpecification.hasStatus(status))
-                .and(DieCutSpecification.hasProjectId(projectId))
-                .and(DieCutSpecification.hasDieNumberLike(dieNumber));
+        Sort sortObj = parseSort(sort);
+        Pageable pageable = PageRequest.of(page, size, sortObj);
 
-        return repository.findAll(spec, PageRequest.of(page, size))
+        Specification<DieCut> spec = Specification
+                .where(DieCutSpecification.hasStatuses(statuses))
+                .and(DieCutSpecification.hasProjectId(projectId))
+                .and(DieCutSpecification.hasDieNumberLike(dieNumber))
+                .and(DieCutSpecification.createdDateFrom(createdDateFrom))
+                .and(DieCutSpecification.createdDateTo(createdDateTo));
+
+        return repository.findAll(spec, pageable)
                 .map(DieCutMapper::toResponse);
+    }
+
+    private Sort parseSort(String sort) {
+        if (sort == null || sort.isBlank()) {
+            return Sort.by("id").ascending();
+        }
+
+        String[] orders = sort.split(";");
+        Sort finalSort = Sort.unsorted();
+
+        for (String order : orders) {
+            String[] parts = order.split(",");
+            String field = parts[0];
+            Sort.Direction direction = parts.length > 1 && parts[1].equalsIgnoreCase("desc")
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
+
+            Sort newSort = Sort.by(direction, field);
+            finalSort = finalSort == Sort.unsorted() ? newSort : finalSort.and(newSort);
+        }
+
+        return finalSort;
     }
 
     public DieCutResponse getById(Long id) {

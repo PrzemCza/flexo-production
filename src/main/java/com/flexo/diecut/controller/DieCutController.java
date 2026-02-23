@@ -1,5 +1,9 @@
 package com.flexo.diecut.controller;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,10 +42,28 @@ public class DieCutController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long projectId,
             @RequestParam(required = false) String dieNumber,
+            @RequestParam(required = false) LocalDate createdDateFrom,
+            @RequestParam(required = false) LocalDate createdDateTo,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id,asc") String sort
     ) {
-        return ResponseEntity.ok(service.getFiltered(status, projectId, dieNumber, page, size));
+        List<String> statuses = (status == null || status.isBlank())
+                ? null
+                : Arrays.asList(status.split(","));
+
+        return ResponseEntity.ok(
+                service.getFiltered(
+                        statuses,
+                        projectId,
+                        dieNumber,
+                        createdDateFrom,
+                        createdDateTo,
+                        page,
+                        size,
+                        sort
+                )
+        );
     }
 
     @GetMapping("/{id}")
