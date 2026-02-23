@@ -38,8 +38,6 @@ public class DieCut {
     @Column(name = "notes")
     private String notes;
 
-    // Gettery i settery
-
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
