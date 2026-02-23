@@ -16,6 +16,8 @@ import com.flexo.diecut.dto.CreateDieCutRequest;
 import com.flexo.diecut.model.DieCut;
 import com.flexo.diecut.service.DieCutService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/die-cuts")
 public class DieCutController {
@@ -27,7 +29,7 @@ public class DieCutController {
     }
 
     @PostMapping
-    public ResponseEntity<DieCut> create(@RequestBody CreateDieCutRequest request) {
+    public ResponseEntity<DieCut> create(@RequestBody @Valid CreateDieCutRequest request) {
         return ResponseEntity.ok(service.createDieCut(request));
     }
 
@@ -44,7 +46,7 @@ public class DieCutController {
     @PutMapping("/{id}")
     public ResponseEntity<DieCut> update(
             @PathVariable Long id,
-            @RequestBody CreateDieCutRequest request
+            @RequestBody @Valid CreateDieCutRequest request
     ) {
         return ResponseEntity.ok(service.update(id, request));
     }
