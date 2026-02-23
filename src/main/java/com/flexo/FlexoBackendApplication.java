@@ -3,14 +3,10 @@ package com.flexo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-
-
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.flexo")
 public class FlexoBackendApplication {
 
-	public static void main(String[] args) {
-		System.out.println("Nowa wersja działa!");
-		SpringApplication.run(FlexoBackendApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(FlexoBackendApplication.class, args);
+    }
 }
