@@ -68,6 +68,7 @@ public class DieCutService {
         dieCut.setRepeatTeeth(request.repeatTeeth());
         dieCut.setProjectId(request.projectId());
         dieCut.setStatus(request.status());
+        dieCut.setMachine(request.machine());
         dieCut.setNotes(request.notes());
         dieCut.setCreatedDate(LocalDate.now());
 
@@ -97,7 +98,8 @@ public class DieCutService {
             List<String> statuses,
             Long projectId,
             String dieNumber,
-            String machine, 
+            String status, 
+            String machine,
             LocalDate createdDateFrom,
             LocalDate createdDateTo,
             int page,
