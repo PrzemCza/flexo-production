@@ -36,4 +36,12 @@ public class DieCutSpecification {
         return (root, query, cb) ->
                 to == null ? null : cb.lessThanOrEqualTo(root.get("createdDate"), to);
     }
+
+    public static Specification<DieCut> hasMachine(String machine) {
+    return (root, query, cb) ->
+            machine == null || machine.isBlank()
+                    ? null
+                    : cb.equal(root.get("machine"), machine);
+    }
+
 }

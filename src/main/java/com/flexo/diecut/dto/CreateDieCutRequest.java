@@ -20,11 +20,14 @@ public record CreateDieCutRequest(
 
         @NotBlank(message = "Status jest wymagany")
         @Size(max = 50, message = "Status może mieć maksymalnie 50 znaków")
-        String status,
+        String status, // ACTIVE, INACTIVE, ARCHIVED, AWAY
 
         @Size(max = 100, message = "Lokalizacja może mieć maksymalnie 100 znaków")
         String storageLocation,
 
         @Size(max = 500, message = "Notatki mogą mieć maksymalnie 500 znaków")
-        String notes
+        String notes,
+
+        @Size(max = 50, message = "Nazwa maszyny może mieć maksymalnie 50 znaków")
+        String machine // 🔥 NOWE POLE
 ) {}

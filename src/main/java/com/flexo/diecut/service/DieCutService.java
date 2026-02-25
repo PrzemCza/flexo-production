@@ -26,23 +26,78 @@ public class DieCutService {
         this.repository = repository;
     }
 
+    //  LOGIKA STATUSÓW
+    private void applyStatusLogic(DieCut dieCut, CreateDieCutRequest request) {
+
+        String status = request.status();
+        String machine = request.machine();
+
+        switch (status) {
+
+            case "ACTIVE" -> {
+                if (machine == null || machine.isBlank()) {
+                    throw new IllegalArgumentException("Dla statusu ACTIVE musisz wybrać maszynę.");
+                }
+                dieCut.setMachine(machine);
+                dieCut.setStorageLocation("machine-" + machine); // lub inna logika
+            }
+
+            case "INACTIVE" -> {
+                dieCut.setMachine(null);
+                dieCut.setStorageLocation("warehouse");
+            }
+
+            case "AWAY" -> {
+                dieCut.setMachine(null);
+                dieCut.setStorageLocation("away");
+            }
+
+            case "ARCHIVED" -> {
+                dieCut.setMachine(null);
+                dieCut.setStorageLocation("archived");
+            }
+
+            default -> throw new IllegalArgumentException("Nieznany status: " + status);
+        }
+    }
+
+    //  CREATE
     public DieCutResponse createDieCut(CreateDieCutRequest request) {
         DieCut dieCut = new DieCut();
         dieCut.setDieNumber(request.dieNumber());
         dieCut.setRepeatTeeth(request.repeatTeeth());
         dieCut.setProjectId(request.projectId());
         dieCut.setStatus(request.status());
-        dieCut.setStorageLocation(request.storageLocation());
         dieCut.setNotes(request.notes());
         dieCut.setCreatedDate(LocalDate.now());
+
+        applyStatusLogic(dieCut, request);
 
         return DieCutMapper.toResponse(repository.save(dieCut));
     }
 
+    //  UPDATE
+    public DieCutResponse update(Long id, CreateDieCutRequest request) {
+        DieCut dieCut = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("DieCut not found: " + id));
+
+        dieCut.setDieNumber(request.dieNumber());
+        dieCut.setRepeatTeeth(request.repeatTeeth());
+        dieCut.setProjectId(request.projectId());
+        dieCut.setStatus(request.status());
+        dieCut.setNotes(request.notes());
+
+        applyStatusLogic(dieCut, request);
+
+        return DieCutMapper.toResponse(repository.save(dieCut));
+    }
+
+    //  FILTERING
     public Page<DieCutResponse> getFiltered(
             List<String> statuses,
             Long projectId,
             String dieNumber,
+            String machine, 
             LocalDate createdDateFrom,
             LocalDate createdDateTo,
             int page,
@@ -57,7 +112,8 @@ public class DieCutService {
                 .and(DieCutSpecification.hasProjectId(projectId))
                 .and(DieCutSpecification.hasDieNumberLike(dieNumber))
                 .and(DieCutSpecification.createdDateFrom(createdDateFrom))
-                .and(DieCutSpecification.createdDateTo(createdDateTo));
+                .and(DieCutSpecification.createdDateTo(createdDateTo))
+                .and(DieCutSpecification.hasMachine(machine)); 
 
         return repository.findAll(spec, pageable)
                 .map(DieCutMapper::toResponse);
@@ -89,20 +145,6 @@ public class DieCutService {
         return repository.findById(id)
                 .map(DieCutMapper::toResponse)
                 .orElseThrow(() -> new RuntimeException("DieCut not found: " + id));
-    }
-
-    public DieCutResponse update(Long id, CreateDieCutRequest request) {
-        DieCut dieCut = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DieCut not found: " + id));
-
-        dieCut.setDieNumber(request.dieNumber());
-        dieCut.setRepeatTeeth(request.repeatTeeth());
-        dieCut.setProjectId(request.projectId());
-        dieCut.setStatus(request.status());
-        dieCut.setStorageLocation(request.storageLocation());
-        dieCut.setNotes(request.notes());
-
-        return DieCutMapper.toResponse(repository.save(dieCut));
     }
 
     public void delete(Long id) {

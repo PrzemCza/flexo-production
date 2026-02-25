@@ -10,5 +10,6 @@ public record DieCutResponse(
         String status,
         String storageLocation,
         LocalDate createdDate,
-        String notes
+        String notes,
+        String machine
 ) {}

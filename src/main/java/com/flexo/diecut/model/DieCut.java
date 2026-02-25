@@ -29,6 +29,9 @@ public class DieCut {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "machine")
+    private String machine;
+
     @Column(name = "storage_location")
     private String storageLocation;
 
@@ -52,6 +55,9 @@ public class DieCut {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getMachine() { return machine; }
+    public void setMachine(String machine) { this.machine = machine; }
 
     public String getStorageLocation() { return storageLocation; }
     public void setStorageLocation(String storageLocation) { this.storageLocation = storageLocation; }

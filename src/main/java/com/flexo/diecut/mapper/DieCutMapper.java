@@ -14,7 +14,8 @@ public class DieCutMapper {
                 dieCut.getStatus(),
                 dieCut.getStorageLocation(),
                 dieCut.getCreatedDate(),
-                dieCut.getNotes()
+                dieCut.getNotes(),
+                dieCut.getMachine()
         );
     }
 }
