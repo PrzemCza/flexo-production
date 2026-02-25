@@ -16,6 +16,8 @@ import com.flexo.rawmaterial.dto.CreateRawMaterialRequest;
 import com.flexo.rawmaterial.dto.RawMaterialResponse;
 import com.flexo.rawmaterial.service.RawMaterialService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/raw-materials")
 public class RawMaterialController {
@@ -40,15 +42,15 @@ public class RawMaterialController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<RawMaterialResponse> create(@RequestBody CreateRawMaterialRequest request) {
-        return ResponseEntity.ok(service.create(request));
-    }
+    public ResponseEntity<RawMaterialResponse> create(
+            @Valid @RequestBody CreateRawMaterialRequest request) {
+         return ResponseEntity.ok(service.create(request)); }
 
     // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<RawMaterialResponse> update(
             @PathVariable Long id,
-            @RequestBody CreateRawMaterialRequest request
+            @Valid @RequestBody CreateRawMaterialRequest request
     ) {
         return ResponseEntity.ok(service.update(id, request));
     }
