@@ -2,6 +2,9 @@ package com.flexo.rawmaterial.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flexo.rawmaterial.dto.CreateRawMaterialRequest;
+import com.flexo.rawmaterial.dto.RawMaterialFilter;
 import com.flexo.rawmaterial.dto.RawMaterialResponse;
 import com.flexo.rawmaterial.service.RawMaterialService;
 
@@ -61,4 +65,14 @@ public class RawMaterialController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    //FILTER
+    @GetMapping("/search")
+    public ResponseEntity<Page<RawMaterialResponse>> search(
+        RawMaterialFilter filter,
+        @PageableDefault(size = 20, sort = "id") Pageable pageable
+) {
+    return ResponseEntity.ok((Page<RawMaterialResponse>) service.search(filter, pageable));
+}
+
 }

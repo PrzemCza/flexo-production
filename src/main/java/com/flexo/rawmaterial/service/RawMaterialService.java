@@ -2,13 +2,18 @@ package com.flexo.rawmaterial.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.flexo.rawmaterial.dto.CreateRawMaterialRequest;
+import com.flexo.rawmaterial.dto.RawMaterialFilter;
 import com.flexo.rawmaterial.dto.RawMaterialResponse;
 import com.flexo.rawmaterial.mapper.RawMaterialMapper;
 import com.flexo.rawmaterial.model.RawMaterial;
 import com.flexo.rawmaterial.repository.RawMaterialRepository;
+import com.flexo.rawmaterial.spec.RawMaterialSpecification;
+
 
 @Service
 public class RawMaterialService {
@@ -62,4 +67,13 @@ public class RawMaterialService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+
+    //FILTER
+    public Page<RawMaterialResponse> search(RawMaterialFilter filter, Pageable pageable) {
+    var spec = RawMaterialSpecification.build(filter);
+
+    return repository.findAll(spec, pageable)
+            .map(RawMaterialMapper::toResponse);
+}
+
 }
