@@ -15,6 +15,7 @@ public class RawMaterialMapper {
         rm.setReceivedDate(request.receivedDate());
         rm.setStatus(request.status());
         rm.setWarehouseLocation(request.warehouseLocation());
+        rm.setAssignedMachine(request.assignedMachine()); // Nowe pole
         return rm;
     }
 
@@ -27,7 +28,8 @@ public class RawMaterialMapper {
                 rm.getSupplier(),
                 rm.getReceivedDate(),
                 rm.getStatus(),
-                rm.getWarehouseLocation()
+                rm.getWarehouseLocation(),
+                rm.getAssignedMachine() // Nowe pole
         );
     }
 }

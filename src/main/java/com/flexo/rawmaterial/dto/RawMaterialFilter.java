@@ -12,5 +12,6 @@ public record RawMaterialFilter(
         String status,
         Date receivedDateFrom,
         Date receivedDateTo,
-        String warehouseLocation
+        String warehouseLocation,
+        String assignedMachine
 ) {}

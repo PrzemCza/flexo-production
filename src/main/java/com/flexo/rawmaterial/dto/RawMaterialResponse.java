@@ -10,5 +10,6 @@ public record RawMaterialResponse(
         String supplier,
         Date receivedDate,
         String status,
-        String warehouseLocation
+        String warehouseLocation,
+        String assignedMachine
 ) {}

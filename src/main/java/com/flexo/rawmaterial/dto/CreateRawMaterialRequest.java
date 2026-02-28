@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateRawMaterialRequest(
-
         @NotNull(message = "Width is required")
         @Min(value = 1, message = "Width must be greater than 0")
         Integer widthMm,
@@ -28,6 +27,9 @@ public record CreateRawMaterialRequest(
         @NotBlank(message = "Status is required")
         String status,
 
-        @NotBlank(message = "Warehouse location is required")
-        String warehouseLocation
+        // Usunięto @NotBlank, bo lokalizacja jest opcjonalna zależnie od statusu
+        String warehouseLocation,
+
+        // Nowe pole opcjonalne
+        String assignedMachine
 ) {}

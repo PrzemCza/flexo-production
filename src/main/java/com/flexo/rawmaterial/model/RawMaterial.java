@@ -37,4 +37,7 @@ public class RawMaterial {
 
     @Column(name = "warehouse_location")
     private String warehouseLocation;
+
+    @Column(name = "assigned_machine") // Nowe pole
+    private String assignedMachine;
 }
