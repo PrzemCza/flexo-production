@@ -25,5 +25,7 @@ public record CreateInkRequest(
     @NotBlank(message = "Status is required")
     String status,
 
+    String machine,
+
     String notes
 ) {}

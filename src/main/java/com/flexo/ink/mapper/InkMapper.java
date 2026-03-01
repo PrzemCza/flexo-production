@@ -8,13 +8,15 @@ public class InkMapper {
 
     public static ink toEntity(CreateInkRequest request) {
         ink ink = new ink();
-        //ink.setInkColorId(request.inkColorId());
+        ink.setInkColorId(request.inkColorId());
         ink.setQuantityKg(request.quantityKg());
         ink.setStorageLocation(request.storageLocation());
         ink.setBatchNumber(request.batchNumber());
         ink.setReceivedDate(request.receivedDate());
         ink.setStatus(request.status());
         ink.setNotes(request.notes());
+        // Mapowanie maszyny (E5, P5, P7, P7-11)
+        ink.setMachine(request.machine());
         return ink;
     }
 
@@ -27,7 +29,8 @@ public class InkMapper {
             ink.getBatchNumber(),
             ink.getReceivedDate(),
             ink.getStatus(),
-            ink.getNotes()
+            ink.getNotes(),
+            ink.getMachine()
         );
     }
 }

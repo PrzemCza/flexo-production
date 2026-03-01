@@ -39,6 +39,9 @@ public class ink {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "machine")
+    private String machine;
+
     @Column(name = "notes")
     private String notes;
 }

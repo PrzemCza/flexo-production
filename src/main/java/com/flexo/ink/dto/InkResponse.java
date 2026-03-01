@@ -10,5 +10,6 @@ public record InkResponse(
     String batchNumber,
     LocalDate receivedDate,
     String status,
+    String machine,
     String notes
 ) {}
