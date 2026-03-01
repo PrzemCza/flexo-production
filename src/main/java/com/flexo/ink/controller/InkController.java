@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/inks")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // KLUCZOWE: Pozwala frontendowi rozmawiać z backendem bez błędów CORS
+@CrossOrigin(origins = "*", allowedHeaders = "*") // KLUCZOWE: Pozwala frontendowi rozmawiać z backendem bez błędów CORS
 public class InkController {
 
     private final InkService service;
