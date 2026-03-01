@@ -3,7 +3,7 @@ package com.flexo.ink.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin; // Dodano
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +23,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/inks")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*") // KLUCZOWE: Pozwala frontendowi rozmawiać z backendem bez błędów CORS
+// ZMIANA: Zamiast "*" podajemy konkretny adres frontendu lub wzorzec
+@CrossOrigin(originPatterns = "http://localhost:*", allowedHeaders = "*", allowCredentials = "true")
 public class InkController {
 
     private final InkService service;
