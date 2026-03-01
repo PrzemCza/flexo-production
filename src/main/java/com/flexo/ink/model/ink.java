@@ -24,8 +24,8 @@ public class ink {
     @Column(name = "ink_color_id")
     private Integer inkColorId;
 
-    @Column(name = "quantity_kg")
-    private Double quantityKg;
+    @Column(name = "quantity_kg", columnDefinition = "numeric")
+    private Double quantityKg; 
 
     @Column(name = "storage_location")
     private String storageLocation;
@@ -36,7 +36,9 @@ public class ink {
     @Column(name = "received_date")
     private LocalDate receivedDate;
 
+    @Column(name = "status")
     private String status;
 
+    @Column(name = "notes")
     private String notes;
 }
