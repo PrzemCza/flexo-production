@@ -8,7 +8,7 @@ public class InkMapper {
 
     public static ink toEntity(CreateInkRequest request) {
         ink ink = new ink();
-        ink.setInkColorId(request.inkColorId());
+        //ink.setInkColorId(request.inkColorId());
         ink.setQuantityKg(request.quantityKg());
         ink.setStorageLocation(request.storageLocation());
         ink.setBatchNumber(request.batchNumber());
