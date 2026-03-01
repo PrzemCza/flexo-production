@@ -1,6 +1,7 @@
 package com.flexo.ink.model;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDate; // Dodano dla precyzji numeric(10,2)
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,21 +23,23 @@ public class ink {
     private Long id;
 
     @Column(name = "ink_color_id")
-    private Integer inkColorId; // Uproszczone do ID (int4)
+    private Integer inkColorId;
 
-    @Column(name = "quantity_kg")
-    private Double quantityKg;
+    @Column(name = "quantity_kg", precision = 10, scale = 2)
+    private BigDecimal quantityKg; // Zmieniono z Double na BigDecimal
 
-    @Column(name = "storage_location")
+    @Column(name = "storage_location", length = 100)
     private String storageLocation;
 
-    @Column(name = "batch_number")
+    @Column(name = "batch_number", length = 100)
     private String batchNumber;
 
     @Column(name = "received_date")
     private LocalDate receivedDate;
 
+    @Column(name = "status", length = 50)
     private String status;
 
+    @Column(name = "notes", length = 255)
     private String notes;
 }
