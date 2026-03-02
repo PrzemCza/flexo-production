@@ -1,11 +1,16 @@
 package com.flexo.polymer.model;
 
-import jakarta.persistence.*;
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "polymer")
@@ -42,4 +47,26 @@ public class Polymer {
 
     private String notes;
     private String machine;
+
+
+
+    
+
+    // Gettery i Settery
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public Integer getProjectId() { return projectId; }
+    public void setProjectId(Integer projectId) { this.projectId = projectId; }
+    
+    // ... dodaj settery dla wszystkich pól, szczególnie:
+    public void setMachine(String machine) { this.machine = machine; }
+    public void setStorageLocation(String storageLocation) { this.storageLocation = storageLocation; }
+    public void setCreatedDate(LocalDate createdDate) { this.createdDate = createdDate; }
+    public void setStatus(String status) { this.status = status; }
+    public void setRepeatTeeth(Integer repeatTeeth) { this.repeatTeeth = repeatTeeth; }
+    public void setLengthMm(Integer lengthMm) { this.lengthMm = lengthMm; }
+    public void setWidthMm(Integer widthMm) { this.widthMm = widthMm; }
+    public void setColorId(Integer colorId) { this.colorId = colorId; }
+    public void setNotes(String notes) { this.notes = notes; }
 }
