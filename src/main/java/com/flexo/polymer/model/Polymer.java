@@ -1,12 +1,17 @@
 package com.flexo.polymer.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "polymer")
 @Data
+@NoArgsConstructor  // <--- To jest kluczowe dla Hibernate
+@AllArgsConstructor // <--- Dobra praktyka przy @Data
 public class Polymer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
