@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/polymers")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowCredentials = "true") // Pozwala na komunikację z frontendem React
+@CrossOrigin(originPatterns = "http://localhost:*", allowedHeaders = "*", allowCredentials = "true") // Pozwala na komunikację z frontendem React
 public class PolymerController {
 
     private final PolymerService polymerService;
