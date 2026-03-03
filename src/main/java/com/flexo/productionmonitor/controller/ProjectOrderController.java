@@ -1,17 +1,23 @@
 package com.flexo.productionmonitor.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.flexo.productionmonitor.dto.ProjectOrderResponse;
 import com.flexo.productionmonitor.service.ProjectOrderService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/production-orders")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowCredentials = "true") // Dopasuj do swojego setupu
+@CrossOrigin(originPatterns = "http://localhost:*", allowedHeaders = "*", allowCredentials = "true") // Dopasuj do swojego setupu
 public class ProjectOrderController {
 
     private final ProjectOrderService orderService;
