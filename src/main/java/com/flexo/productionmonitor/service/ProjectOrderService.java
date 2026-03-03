@@ -1,21 +1,62 @@
 package com.flexo.productionmonitor.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.flexo.diecut.repository.DieCutRepository;
+import com.flexo.ink.repository.InkRepository;
+import com.flexo.polymer.repository.PolymerRepository;
+import com.flexo.productionmonitor.dto.ProjectOrderRequest;
 import com.flexo.productionmonitor.dto.ProjectOrderResponse;
 import com.flexo.productionmonitor.model.ProjectOrder;
 import com.flexo.productionmonitor.repository.ProjectOrderRepository;
+import com.flexo.rawmaterial.repository.RawMaterialRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProjectOrderService {
 
     private final ProjectOrderRepository repository;
+    private final RawMaterialRepository rawMaterialRepository;
+    private final DieCutRepository dieCutRepository;
+    private final PolymerRepository polymerRepository;
+    private final InkRepository inkRepository;
+    
+
+    @Transactional
+    public void createOrder(ProjectOrderRequest request) {
+        ProjectOrder order = new ProjectOrder();
+        order.setOrderNumber(request.getOrderNumber());
+        order.setJobName(request.getJobName());
+        order.setTargetMachine(request.getTargetMachine());
+        order.setDeadline(request.getDeadline());
+        order.setStatus("OPEN");
+
+        // Pobieranie i przypisywanie komponentów
+        if (request.getRawMaterialId() != null) {
+            order.setRawMaterial(rawMaterialRepository.findById(request.getRawMaterialId()).orElse(null));
+        }
+        if (request.getDieCutId() != null) {
+            order.setDieCut(dieCutRepository.findById(request.getDieCutId()).orElse(null));
+        }
+        if (request.getPolymerId() != null) {
+            order.setPolymer(polymerRepository.findById(request.getPolymerId()).orElse(null));
+        }
+        
+        // Farby (ManyToMany)
+        if (request.getInkIds() != null && !request.getInkIds().isEmpty()) {
+            order.setInks(new HashSet<>(inkRepository.findAllById(request.getInkIds())));
+        }
+
+        repository.save(order);
+    }
 
     /**
      * Pobiera wszystkie zlecenia i mapuje je na DTO z monitorowaniem statusów.
