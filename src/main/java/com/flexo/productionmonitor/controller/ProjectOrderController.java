@@ -49,8 +49,5 @@ public class ProjectOrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProjectOrderResponse> getOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.getOrderById(id));
-    }
+
 }
