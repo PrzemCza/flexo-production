@@ -58,6 +58,17 @@ public class ProjectOrderService {
         repository.save(order);
     }
 
+    @Transactional
+    public void deleteOrder(Long id) {
+    repository.deleteById(id);
+    }
+
+    public ProjectOrderResponse getOrderById(Long id) {
+    ProjectOrder order = repository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Zlecenie nie istnieje"));
+    return mapToResponse(order); // używamy Twojej istniejącej metody mapowania
+    }
+
     /**
      * Pobiera wszystkie zlecenia i mapuje je na DTO z monitorowaniem statusów.
      * Ta metoda naprawi błąd w Twoim kontrolerze.
