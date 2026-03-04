@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping; // Dodano import
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/production-orders")
 @RequiredArgsConstructor
-@CrossOrigin(originPatterns = "http://localhost:*", allowedHeaders = "*", allowCredentials = "true") // Dopasuj do swojego setupu
+@CrossOrigin(originPatterns = "http://localhost:*", allowedHeaders = "*", allowCredentials = "true") // Uproszczony CrossOrigin dla dewelopmentu
 public class ProjectOrderController {
 
     private final ProjectOrderService orderService;
@@ -43,11 +44,16 @@ public class ProjectOrderController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    // DODANO METODĘ PUT - niezbędną do edycji zlecenia
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateOrder(@PathVariable Long id, @RequestBody ProjectOrderRequest request) {
+        orderService.updateOrder(id, request);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }

@@ -28,53 +28,78 @@ public class ProjectOrderService {
     private final DieCutRepository dieCutRepository;
     private final PolymerRepository polymerRepository;
     private final InkRepository inkRepository;
-    
 
     @Transactional
     public void createOrder(ProjectOrderRequest request) {
         ProjectOrder order = new ProjectOrder();
-        order.setOrderNumber(request.getOrderNumber());
-        order.setJobName(request.getJobName());
-        order.setTargetMachine(request.getTargetMachine());
-        order.setDeadline(request.getDeadline());
+        updateOrderFields(order, request);
         order.setStatus("OPEN");
+        repository.save(order);
+    }
 
-        // Pobieranie i przypisywanie komponentów
-        if (request.getRawMaterialId() != null) {
-            order.setRawMaterial(rawMaterialRepository.findById(request.getRawMaterialId()).orElse(null));
-        }
-        if (request.getDieCutId() != null) {
-            order.setDieCut(dieCutRepository.findById(request.getDieCutId()).orElse(null));
-        }
-        if (request.getPolymerId() != null) {
-            order.setPolymer(polymerRepository.findById(request.getPolymerId()).orElse(null));
-        }
+    // NOWA METODA: Aktualizacja istniejącego zlecenia
+    @Transactional
+    public void updateOrder(Long id, ProjectOrderRequest request) {
+        ProjectOrder order = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Zlecenie o ID " + id + " nie istnieje."));
         
-        // Farby (ManyToMany)
-        if (request.getInkIds() != null && !request.getInkIds().isEmpty()) {
-            order.setInks(new HashSet<>(inkRepository.findAllById(request.getInkIds())));
-        }
+        updateOrderFields(order, request);
+        
+        // Opcjonalnie: aktualizacja statusu, jeśli przesyłasz go w requeście
+        // order.setStatus(request.getStatus()); 
 
         repository.save(order);
     }
 
+    // Prywatna metoda pomocnicza, aby nie powtarzać kodu w Create i Update
+    private void updateOrderFields(ProjectOrder order, ProjectOrderRequest request) {
+        order.setOrderNumber(request.getOrderNumber());
+        order.setJobName(request.getJobName());
+        order.setTargetMachine(request.getTargetMachine());
+        order.setDeadline(request.getDeadline());
+
+        // Surowiec
+        if (request.getRawMaterialId() != null) {
+            order.setRawMaterial(rawMaterialRepository.findById(request.getRawMaterialId()).orElse(null));
+        } else {
+            order.setRawMaterial(null);
+        }
+
+        // Wykrojnik
+        if (request.getDieCutId() != null) {
+            order.setDieCut(dieCutRepository.findById(request.getDieCutId()).orElse(null));
+        } else {
+            order.setDieCut(null);
+        }
+
+        // Polimer
+        if (request.getPolymerId() != null) {
+            order.setPolymer(polymerRepository.findById(request.getPolymerId()).orElse(null));
+        } else {
+            order.setPolymer(null);
+        }
+
+        // Farby (ManyToMany)
+        if (request.getInkIds() != null) {
+            order.setInks(new HashSet<>(inkRepository.findAllById(request.getInkIds())));
+        } else {
+            order.getInks().clear();
+        }
+    }
+
     @Transactional
     public void deleteOrder(Long id) {
-    repository.deleteById(id);
+        repository.deleteById(id);
     }
 
     public ProjectOrderResponse getOrderById(Long id) {
-    ProjectOrder order = repository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Zlecenie nie istnieje"));
-    return mapToResponse(order); // używamy Twojej istniejącej metody mapowania
+        ProjectOrder order = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Zlecenie nie istnieje"));
+        return mapToResponse(order);
     }
 
-    /**
-     * Pobiera wszystkie zlecenia i mapuje je na DTO z monitorowaniem statusów.
-     * Ta metoda naprawi błąd w Twoim kontrolerze.
-     */
     public List<ProjectOrderResponse> getAllOrdersWithMonitor() {
-        return repository.findAllWithDetails().stream()
+        return repository.findAll().stream() // Zakładam użycie findAll, jeśli findAllWithDetails nie jest wymagane
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -88,19 +113,19 @@ public class ProjectOrderService {
     private ProjectOrderResponse mapToResponse(ProjectOrder order) {
         String target = order.getTargetMachine();
 
-        // 1. Surowiec: sprawdzamy assigned_machine
+        // 1. Surowiec
         boolean rmReady = order.getRawMaterial() != null && 
                           target.equalsIgnoreCase(order.getRawMaterial().getAssignedMachine());
         
-        // 2. Wykrojnik: sprawdzamy machine
+        // 2. Wykrojnik
         boolean dcReady = order.getDieCut() != null && 
                           target.equalsIgnoreCase(order.getDieCut().getMachine());
                           
-        // 3. Polimery: (Teczka projektu) sprawdzamy machine
+        // 3. Polimery
         boolean polyReady = order.getPolymer() != null && 
                             target.equalsIgnoreCase(order.getPolymer().getMachine());
 
-        // 4. Farby: Wszystkie przypisane muszą być na właściwej maszynie
+        // 4. Farby
         long totalInks = order.getInks() != null ? order.getInks().size() : 0;
         long readyInksCount = totalInks > 0 ? order.getInks().stream()
                 .filter(ink -> target.equalsIgnoreCase(ink.getMachine()))
