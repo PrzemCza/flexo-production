@@ -1,6 +1,7 @@
 package com.flexo.productionmonitor.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record ProjectOrderResponse(
     Long id,
@@ -10,12 +11,17 @@ public record ProjectOrderResponse(
     String status,
     LocalDate deadline,
     
-    // Flagi gotowości dla frontendu
+    // Flagi gotowości
     boolean isRawMaterialReady,
     boolean isDieCutReady,
     boolean isPolymerReady,
     boolean isInksReady,
     
-    // Informacja o postępie farb (np. "2/5")
-    String inksProgress
+    String inksProgress,
+    
+    // Zaktualizowane pola tekstowe bazujące na Twoich encjach
+    String rawMaterialName, // Tutaj przekażemy Batch Number
+    String dieCutName,      // Tutaj Die Number
+    String polymerName,     // Tutaj Project ID
+    List<String> inkList    // Tutaj Ink Color IDs lub Batch Numbers
 ) {}
