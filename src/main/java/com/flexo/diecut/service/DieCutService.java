@@ -26,42 +26,36 @@ public class DieCutService {
         this.repository = repository;
     }
 
-    //  LOGIKA STATUSÓW
+    // --- LOGIKA STATUSÓW ---
     private void applyStatusLogic(DieCut dieCut, CreateDieCutRequest request) {
-
         String status = request.status();
         String machine = request.machine();
 
         switch (status) {
-
             case "ACTIVE" -> {
                 if (machine == null || machine.isBlank()) {
                     throw new IllegalArgumentException("Dla statusu ACTIVE musisz wybrać maszynę.");
                 }
                 dieCut.setMachine(machine);
-                dieCut.setStorageLocation("machine-" + machine); // lub inna logika
+                dieCut.setStorageLocation("machine-" + machine);
             }
-
             case "INACTIVE" -> {
                 dieCut.setMachine(null);
                 dieCut.setStorageLocation("warehouse");
             }
-
             case "AWAY" -> {
                 dieCut.setMachine(null);
                 dieCut.setStorageLocation("away");
             }
-
             case "ARCHIVED" -> {
                 dieCut.setMachine(null);
                 dieCut.setStorageLocation("archived");
             }
-
             default -> throw new IllegalArgumentException("Nieznany status: " + status);
         }
     }
 
-    //  CREATE
+    // --- CRUD ---
     public DieCutResponse createDieCut(CreateDieCutRequest request) {
         DieCut dieCut = new DieCut();
         dieCut.setDieNumber(request.dieNumber());
@@ -77,7 +71,6 @@ public class DieCutService {
         return DieCutMapper.toResponse(repository.save(dieCut));
     }
 
-    //  UPDATE
     public DieCutResponse update(Long id, CreateDieCutRequest request) {
         DieCut dieCut = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("DieCut not found: " + id));
@@ -93,13 +86,13 @@ public class DieCutService {
         return DieCutMapper.toResponse(repository.save(dieCut));
     }
 
-    //  FILTERING
+    // --- FILTERING ---
     public Page<DieCutResponse> getFiltered(
             List<String> statuses,
             Long projectId,
             String dieNumber,
-            String status, 
             String machine,
+            String additionalParam, 
             LocalDate createdDateFrom,
             LocalDate createdDateTo,
             int page,
@@ -109,13 +102,27 @@ public class DieCutService {
         Sort sortObj = parseSort(sort);
         Pageable pageable = PageRequest.of(page, size, sortObj);
 
-        Specification<DieCut> spec = Specification
-                .where(DieCutSpecification.hasStatuses(statuses))
-                .and(DieCutSpecification.hasProjectId(projectId))
-                .and(DieCutSpecification.hasDieNumberLike(dieNumber))
-                .and(DieCutSpecification.createdDateFrom(createdDateFrom))
-                .and(DieCutSpecification.createdDateTo(createdDateTo))
-                .and(DieCutSpecification.hasMachine(machine)); 
+        // NAPRAWIONA INICJALIZACJA SPECYFIKACJI
+        Specification<DieCut> spec = (root, query, cb) -> cb.conjunction();
+
+        if (statuses != null && !statuses.isEmpty()) {
+            spec = spec.and(DieCutSpecification.hasStatuses(statuses));
+        }
+        if (projectId != null) {
+            spec = spec.and(DieCutSpecification.hasProjectId(projectId));
+        }
+        if (dieNumber != null && !dieNumber.isBlank()) {
+            spec = spec.and(DieCutSpecification.hasDieNumberLike(dieNumber));
+        }
+        if (machine != null && !machine.isBlank()) {
+            spec = spec.and(DieCutSpecification.hasMachine(machine));
+        }
+        if (createdDateFrom != null) {
+            spec = spec.and(DieCutSpecification.createdDateFrom(createdDateFrom));
+        }
+        if (createdDateTo != null) {
+            spec = spec.and(DieCutSpecification.createdDateTo(createdDateTo));
+        }
 
         return repository.findAll(spec, pageable)
                 .map(DieCutMapper::toResponse);
@@ -139,7 +146,6 @@ public class DieCutService {
             Sort newSort = Sort.by(direction, field);
             finalSort = finalSort == Sort.unsorted() ? newSort : finalSort.and(newSort);
         }
-
         return finalSort;
     }
 
