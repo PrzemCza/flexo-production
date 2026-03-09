@@ -1,12 +1,16 @@
 package com.flexo.ink.service;
 
 import java.util.List;
+
 import org.springframework.stereotype.Service;
+
+import com.flexo.common.exception.ResourceNotFoundException;
 import com.flexo.ink.dto.CreateInkRequest;
 import com.flexo.ink.dto.InkResponse;
 import com.flexo.ink.mapper.InkMapper;
-import com.flexo.ink.model.ink;
+import com.flexo.ink.model.Ink;
 import com.flexo.ink.repository.InkRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -15,7 +19,7 @@ public class InkService {
 
     private final InkRepository repository;
 
-    private void applyStatusLogic(ink inkEntity, CreateInkRequest request) {
+    private void applyStatusLogic(Ink inkEntity, CreateInkRequest request) {
         String status = request.status();
         String machine = request.machine();
 
@@ -41,7 +45,7 @@ public class InkService {
     }
 
     public InkResponse create(CreateInkRequest request) {
-        ink entity = InkMapper.toEntity(request);
+        Ink entity = InkMapper.toEntity(request);
         applyStatusLogic(entity, request);
         return InkMapper.toResponse(repository.save(entity));
     }
@@ -55,12 +59,12 @@ public class InkService {
     public InkResponse getById(Long id) {
         return repository.findById(id)
                 .map(InkMapper::toResponse)
-                .orElseThrow(() -> new RuntimeException("Ink not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Ink not found with id: " + id));
     }
 
     public InkResponse update(Long id, CreateInkRequest request) {
-        ink existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ink not found with id: " + id));
+        Ink existing = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ink not found with id: " + id));
 
         existing.setInkColorId(request.inkColorId());
         existing.setQuantityKg(request.quantityKg());

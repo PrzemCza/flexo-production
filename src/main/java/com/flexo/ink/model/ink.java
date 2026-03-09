@@ -15,7 +15,7 @@ import lombok.Setter;
 @Table(name = "ink_container")
 @Getter
 @Setter
-public class ink {
+public class Ink {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class ink {
     private Integer inkColorId;
 
     @Column(name = "quantity_kg", columnDefinition = "numeric")
-    private Double quantityKg; 
+    private Double quantityKg;
 
     @Column(name = "storage_location")
     private String storageLocation;

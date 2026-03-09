@@ -2,35 +2,34 @@ package com.flexo.ink.mapper;
 
 import com.flexo.ink.dto.CreateInkRequest;
 import com.flexo.ink.dto.InkResponse;
-import com.flexo.ink.model.ink;
+import com.flexo.ink.model.Ink;
 
 public class InkMapper {
 
-    public static ink toEntity(CreateInkRequest request) {
-        ink ink = new ink();
-        ink.setInkColorId(request.inkColorId());
-        ink.setQuantityKg(request.quantityKg());
-        ink.setStorageLocation(request.storageLocation());
-        ink.setBatchNumber(request.batchNumber());
-        ink.setReceivedDate(request.receivedDate());
-        ink.setStatus(request.status());
-        ink.setNotes(request.notes());
-        // Mapowanie maszyny (E5, P5, P7, P7-11)
-        ink.setMachine(request.machine());
-        return ink;
+    public static Ink toEntity(CreateInkRequest request) {
+        Ink entity = new Ink();
+        entity.setInkColorId(request.inkColorId());
+        entity.setQuantityKg(request.quantityKg());
+        entity.setStorageLocation(request.storageLocation());
+        entity.setBatchNumber(request.batchNumber());
+        entity.setReceivedDate(request.receivedDate());
+        entity.setStatus(request.status());
+        entity.setNotes(request.notes());
+        entity.setMachine(request.machine());
+        return entity;
     }
 
-    public static InkResponse toResponse(ink ink) {
+    public static InkResponse toResponse(Ink entity) {
         return new InkResponse(
-            ink.getId(),
-            ink.getInkColorId(),
-            ink.getQuantityKg(),
-            ink.getStorageLocation(),
-            ink.getBatchNumber(),
-            ink.getReceivedDate(),
-            ink.getStatus(),
-            ink.getNotes(),
-            ink.getMachine()
+            entity.getId(),
+            entity.getInkColorId(),
+            entity.getQuantityKg(),
+            entity.getStorageLocation(),
+            entity.getBatchNumber(),
+            entity.getReceivedDate(),
+            entity.getStatus(),
+            entity.getNotes(),
+            entity.getMachine()
         );
     }
 }

@@ -5,7 +5,7 @@ import java.time.LocalDateTime; // zakładając Twoją nazwę klasy
 import java.util.Set;
 
 import com.flexo.diecut.model.DieCut;
-import com.flexo.ink.model.ink;
+import com.flexo.ink.model.Ink;
 import com.flexo.polymer.model.Polymer;
 import com.flexo.rawmaterial.model.RawMaterial;
 
@@ -57,7 +57,7 @@ public class ProjectOrder {
         joinColumns = @JoinColumn(name = "project_order_id"),
         inverseJoinColumns = @JoinColumn(name = "ink_id")
     )
-    private Set<ink> inks;
+    private Set<Ink> inks;
 
     private String status;
     private String notes;
